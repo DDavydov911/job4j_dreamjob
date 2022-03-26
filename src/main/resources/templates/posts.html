@@ -31,11 +31,7 @@
             </tr>
             </thead>
             <tbody>
-            <!--/*@thymesVar id="posts" type="java"*/-->
-            <!--/*@thymesVar id="post" type="java"*/-->
             <tr th:each="post: ${posts}">
-                <!--/*@thymesVar id="id" type="java"*/-->
-                <!--/*@thymesVar id="name" type="java"*/-->
                 <td th:text="${post.id}"></td>
                 <td th:text="${post.name}"/>
             </tr>
