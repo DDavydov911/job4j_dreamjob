@@ -3,8 +3,11 @@ package ru.job4j.dream.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import ru.job4j.dream.model.Post;
 import ru.job4j.dream.store.PostStore;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class PostController {
@@ -21,5 +24,18 @@ public class PostController {
     public String addPost(Model model) {
         model.addAttribute("post", new Post(0, "Заполните поле"));
         return "addPost";
+    }
+
+    @GetMapping("/formAddPost")
+    public String formAddPost(Model model) {
+        return "addPost";
+    }
+
+    @PostMapping("/savePost")
+    public String savePost(HttpServletRequest req) {
+        String name = req.getParameter("name");
+        System.out.println(name);
+        store.add(new Post(4, name));
+        return "redirect:/posts";
     }
 }
