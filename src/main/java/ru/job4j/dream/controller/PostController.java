@@ -37,7 +37,7 @@ public class PostController {
     public String savePost(HttpServletRequest req) {
         String name = req.getParameter("name");
         System.out.println(name);
-        store.add(new Post(4, name));
+        store.add(new Post(PostStore.id.incrementAndGet(), name));
         return "redirect:/posts";
     }
 
