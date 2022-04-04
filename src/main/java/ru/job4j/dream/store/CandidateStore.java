@@ -1,22 +1,27 @@
 package ru.job4j.dream.store;
 
 import ru.job4j.dream.model.Candidate;
+import ru.job4j.dream.model.Post;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CandidateStore {
 
     private static final CandidateStore INST = new CandidateStore();
 
+    private final AtomicInteger id;
+
     private final Map<Integer, Candidate> candidateMap = new ConcurrentHashMap<>();
 
     private CandidateStore() {
-        candidateMap.put(1, new Candidate(1, "Ivanov Ivan", "Junior"));
-        candidateMap.put(2, new Candidate(2, "Semenov Semen", "Middle"));
-        candidateMap.put(3, new Candidate(3, "Petrov Petr", "Senior"));
-        candidateMap.put(4, new Candidate(4, "Artemov Artem", "Architect"));
+        id = new AtomicInteger(0);
+        candidateMap.put(id.incrementAndGet(), new Candidate(id.get(), "Ivanov Ivan", "Junior"));
+        candidateMap.put(id.incrementAndGet(), new Candidate(id.get(), "Semenov Semen", "Middle"));
+        candidateMap.put(id.incrementAndGet(), new Candidate(id.get(), "Petrov Petr", "Senior"));
+        candidateMap.put(id.incrementAndGet(), new Candidate(id.get(), "Artemov Artem", "Architect"));
     }
 
     public static CandidateStore instOf() {
@@ -25,5 +30,18 @@ public class CandidateStore {
 
     public Collection<Candidate> findAll() {
         return candidateMap.values();
+    }
+
+    public void create(Candidate candidate) {
+        candidate.setId(id.incrementAndGet());
+        candidateMap.put(id.get(), candidate);
+    }
+
+    public void update(Candidate candidate) {
+        candidateMap.replace(candidate.getId(), candidate);
+    }
+
+    public Candidate findById(int id) {
+        return candidateMap.get(id);
     }
 }

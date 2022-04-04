@@ -44,7 +44,8 @@ public class PostStore {
     }
 
     public void create(Post post) {
-        posts.put(post.getId(), post);
+        post.setId(id.incrementAndGet());
+        posts.put(id.get(), post);
     }
 
     public static void main(String[] args) {
