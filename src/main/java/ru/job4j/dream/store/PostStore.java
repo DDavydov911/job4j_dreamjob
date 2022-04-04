@@ -11,7 +11,7 @@ public class PostStore {
 
     private static final PostStore INST = new PostStore();
 
-    public static AtomicInteger id;
+    public final AtomicInteger id;
 
     private final Map<Integer, Post> posts = new ConcurrentHashMap<>();
 
@@ -31,7 +31,8 @@ public class PostStore {
     }
 
     public void add(Post post) {
-        posts.put(post.getId(), post);
+        post.setId(id.incrementAndGet());
+        posts.put(id.get(), post);
     }
 
     public Post findById(int id) {

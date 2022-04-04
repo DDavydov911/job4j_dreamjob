@@ -14,11 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class PostController {
 
-    private final PostStore store = PostStore.instOf();
+    private final PostStore postStore = PostStore.instOf();
 
     @GetMapping("/posts")
     public String posts(Model model) {
-        model.addAttribute("posts", store.findAll());
+        model.addAttribute("posts", postStore.findAll());
         return "posts";
     }
 
@@ -32,30 +32,36 @@ public class PostController {
     public String formAddPost(Model model) {
         return "addPost";
     }
-
+/*
     @PostMapping("/savePost")
     public String savePost(HttpServletRequest req) {
         String name = req.getParameter("name");
         System.out.println(name);
-        store.add(new Post(PostStore.id.incrementAndGet(), name));
+        postStore.add(new Post(postStore.id.incrementAndGet(), name));
+        return "redirect:/posts";
+    }
+*/
+    @PostMapping("/savePost")
+    public String savePost(@ModelAttribute Post post) {
+        postStore.add(post);
         return "redirect:/posts";
     }
 
     @GetMapping("/formUpdatePost/{postId}")
     public String formUpdatePost(Model model, @PathVariable("postId") int id) {
-        model.addAttribute("post", store.findById(id));
+        model.addAttribute("post", postStore.findById(id));
         return "updatePost";
     }
 
     @PostMapping("/updatePost")
     public String updatePost(@ModelAttribute Post post) {
-        store.update(post);
+        postStore.update(post);
         return "redirect:/posts";
     }
 
     @PostMapping("/createPost")
     public String createPost(@ModelAttribute Post post) {
-        store.create(post);
+        postStore.create(post);
         return "redirect:/posts";
     }
 }
