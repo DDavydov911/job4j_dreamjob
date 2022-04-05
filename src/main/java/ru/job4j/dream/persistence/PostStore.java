@@ -32,7 +32,7 @@ public class PostStore {
 
     public void add(Post post) {
         post.setId(id.incrementAndGet());
-        posts.put(id.get(), post);
+        posts.put(post.getId(), post);
     }
 
     public Post findById(int id) {
@@ -45,7 +45,7 @@ public class PostStore {
 
     public void create(Post post) {
         post.setId(id.incrementAndGet());
-        posts.put(id.get(), post);
+        posts.put(post.getId(), post);
     }
 
     public static void main(String[] args) {
