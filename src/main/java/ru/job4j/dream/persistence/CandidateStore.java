@@ -33,7 +33,7 @@ public class CandidateStore {
 
     public void create(Candidate candidate) {
         candidate.setId(id.incrementAndGet());
-        candidateMap.put(id.get(), candidate);
+        candidateMap.put(candidate.getId(), candidate);
     }
 
     public void update(Candidate candidate) {
