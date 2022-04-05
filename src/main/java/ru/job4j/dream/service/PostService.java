@@ -1,5 +1,6 @@
 package ru.job4j.dream.service;
 
+import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Service;
 import ru.job4j.dream.model.Post;
 import ru.job4j.dream.store.PostStore;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+@ThreadSafe
 @Service
 public class PostService {
 

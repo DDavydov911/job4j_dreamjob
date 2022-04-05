@@ -2,6 +2,7 @@ package ru.job4j.dream.model;
 
 import java.util.Objects;
 
+
 public class Post {
     private int id;
     private String name;

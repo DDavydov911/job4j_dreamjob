@@ -1,5 +1,7 @@
 package ru.job4j.dream.store;
 
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Repository;
 import ru.job4j.dream.model.Post;
 
@@ -8,12 +10,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
+@ThreadSafe
 @Repository
 public class PostStore {
-
+    @GuardedBy("this")
     public final AtomicInteger id;
 
+    @GuardedBy("this")
     private final Map<Integer, Post> posts = new ConcurrentHashMap<>();
 
     private PostStore() {
