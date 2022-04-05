@@ -1,5 +1,6 @@
-package ru.job4j.dream.persistence;
+package ru.job4j.dream.store;
 
+import org.springframework.stereotype.Repository;
 import ru.job4j.dream.model.Post;
 
 import java.util.Collection;
@@ -7,9 +8,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class PostStore {
 
-    private static final PostStore INST = new PostStore();
+@Repository
+public class PostStore {
 
     public final AtomicInteger id;
 
@@ -20,10 +21,6 @@ public class PostStore {
         posts.put(id.incrementAndGet(), new Post(id.get(), "Junior Java Job"));
         posts.put(id.incrementAndGet(), new Post(id.get(), "Middle Java Job"));
         posts.put(id.incrementAndGet(), new Post(id.get(), "Senior Java Job"));
-    }
-
-    public static PostStore instOf() {
-        return INST;
     }
 
     public Collection<Post> findAll() {
