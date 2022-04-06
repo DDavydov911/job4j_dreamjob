@@ -33,7 +33,7 @@
             <div class="navbar-nav">
                 <a class="nav-item nav-link active" href="#">Главная <span class="sr-only">(current)</span></a>
                 <a class="nav-item nav-link" th:href="@{/posts}">Вакансии</a>
-                <a class="nav-item nav-link" th:href="@{/addPost}">Добавить вакансию</a>
+                <a class="nav-item nav-link" th:href="@{/formAddPost}">Добавить вакансию</a>
                 <a class="nav-item nav-link" th:href="@{/candidates}">Кандидаты</a>
                 <a class="nav-item nav-link" th:href="@{/addCandidate}">Новый кандидат</a>
             </div>
@@ -49,16 +49,22 @@
                 </tr>
             </thead>
             <tbody>
-            <tr th:each="candidate: ${candidates}">
-                <td th:text="${candidate.id}"></td>
-                <td>
-                    <a th:href="@{|/formUpdateCandidate/${candidate.id}|}">
-                        <i class="fa fa-edit"></i>
-                    </a>
-                    <span th:text="${candidate.name}"></span>
-                </td>
-                <td th:text="${candidate.description}"></td>
-            </tr>
+                <tr th:each="candidate: ${candidates}">
+                    <td th:text="${candidate.id}"></td>
+
+                    <td>
+                        <img th:width="150" th:high="150" th:src="@{|/photoCandidate/${candidate.id}|}" alt="фото">
+                        <span th:text="${candidate.name}"></span>
+                    </td>
+
+                    <td th:text="${candidate.description}"></td>
+
+                    <td>
+                        <a th:href="@{|/formUpdateCandidate/${candidate.id}|}">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
