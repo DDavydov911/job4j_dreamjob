@@ -41,4 +41,8 @@ public class PostService {
     public Post findById(int id) {
         return store.findById(id);
     }
+
+    public void create(Post post) {
+        add(post);
+    }
 }
