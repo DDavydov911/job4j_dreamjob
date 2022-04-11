@@ -2,7 +2,7 @@ package ru.job4j.dream.service;
 
 import org.springframework.stereotype.Service;
 import ru.job4j.dream.model.Candidate;
-import ru.job4j.dream.store.CandidateStore;
+import ru.job4j.dream.store.CandidateDbStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,34 +10,34 @@ import java.util.List;
 @Service
 public class CandidateService {
 
-    private final CandidateStore candidateStore;
+    private final CandidateDbStore candidateDbStore;
 
-    public CandidateService(CandidateStore candidateStore) {
-        this.candidateStore = candidateStore;
+    public CandidateService(CandidateDbStore candidateDbStore) {
+        this.candidateDbStore = candidateDbStore;
     }
 
     public List<Candidate> findAll() {
-        return new ArrayList<>(candidateStore.findAll());
+        return new ArrayList<>(candidateDbStore.findAll());
     }
 
     public void add(Candidate candidate) {
-        candidateStore.add(candidate);
+        candidateDbStore.create(candidate);
     }
 
     public void update(Candidate candidate) {
-        candidateStore.update(candidate);
+        candidateDbStore.update(candidate);
     }
-
+/*
     public void create(Candidate candidate) {
-        candidate.setId(candidateStore.id.incrementAndGet());
-        candidateStore.create(candidate);
+        candidate.setId(candidateDbStore.id.incrementAndGet());
+        candidateDbStore.create(candidate);
     }
-
+*/
     public Candidate findById(int id) {
-        return candidateStore.findById(id);
+        return candidateDbStore.findById(id);
     }
 
     public Candidate getById(Integer candidateId) {
-        return candidateStore.findById(candidateId);
+        return candidateDbStore.findById(candidateId);
     }
 }
