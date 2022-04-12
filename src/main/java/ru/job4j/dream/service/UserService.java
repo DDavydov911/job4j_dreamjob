@@ -22,4 +22,8 @@ public class UserService {
     public Optional<User> findById(int id) {
         return userStoreDb.findById(id);
     }
+
+    public Optional<User> findUserByEmailAndPwd(String email, String password) {
+        return userStoreDb.findUserByEmailAndPwd(email, password);
+    }
 }

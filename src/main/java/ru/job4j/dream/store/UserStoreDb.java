@@ -44,7 +44,8 @@ public class UserStoreDb {
         User user = null;
         try (Connection connection = pool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     "SELECT * FROM users WHERE id = ?"
+                     "SELECT * FROM users WHERE id = ?",
+                     PreparedStatement.RETURN_GENERATED_KEYS
              )
         ) {
             preparedStatement.setInt(1, id);
@@ -63,5 +64,29 @@ public class UserStoreDb {
             ex.printStackTrace();
         }
         return Optional.of(user);
+    }
+
+    public Optional<User> findUserByEmailAndPwd(String email, String password) {
+        User user = null;
+        try (Connection connection = pool.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "SELECT * FROM users WHERE email = ?",
+                     PreparedStatement.RETURN_GENERATED_KEYS
+             )) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        user = new User(
+                                resultSet.getString("email"),
+                                resultSet.getString("password")
+                        );
+                        user.setId(resultSet.getInt("id"));
+                    }
+                }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return (user != null && password.equals(user.getPassword()))
+                ? Optional.of(user) : Optional.empty();
     }
 }
