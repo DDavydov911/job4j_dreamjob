@@ -56,4 +56,14 @@ public class UserController {
         session.setAttribute("user", userDb.get());
         return "redirect:/index";
     }
+
+    @GetMapping("/fail")
+    public String fail() {
+        return "fail";
+    }
+
+    @GetMapping("/success")
+    public String success() {
+        return "redirect:/index";
+    }
 }
