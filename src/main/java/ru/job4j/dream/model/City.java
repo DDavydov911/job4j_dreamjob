@@ -1,8 +1,9 @@
 package ru.job4j.dream.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class City {
+public class City implements Serializable {
     private int id;
     private String name;
 
