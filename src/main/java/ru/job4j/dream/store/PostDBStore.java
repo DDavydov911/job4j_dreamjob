@@ -120,4 +120,5 @@ public class PostDBStore {
         ps.setBoolean(4, post.getVisible());
         ps.setObject(5, gson.toJson(post.getCity()));
     }
+
 }
