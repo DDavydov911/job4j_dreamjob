@@ -70,14 +70,17 @@ public class CandidateDbStore {
     }
 
     public void update(Candidate candidate) {
+        boolean hasPhoto = candidate.getPhoto() != null;
+        String st1 = "UPDATE candidates SET name = ?, description = ?, photo = ? WHERE id = ?";
+        String st2 = "UPDATE candidates SET name = ?, description = ? WHERE id = ?";
         try (Connection connection = pool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     "UPDATE candidates SET name = ?, description = ? WHERE id = ?"
+                     hasPhoto ? st1 : st2
              )) {
-            preparedStatement.setString(1, candidate.getName());
-            preparedStatement.setString(2, candidate.getDescription());
-            preparedStatement.setInt(3, candidate.getId());
-            preparedStatement.executeUpdate();
+            setCandidateAttributes(candidate, preparedStatement);
+            preparedStatement.setInt(hasPhoto ? 4 : 3, candidate.getId());
+            int res = preparedStatement.executeUpdate();
+            System.out.println(res);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -89,9 +92,7 @@ public class CandidateDbStore {
                      "INSERT INTO candidates(name, description, photo) VALUES (?, ?, ?)",
                      PreparedStatement.RETURN_GENERATED_KEYS
              )) {
-            preparedStatement.setString(1, candidate.getName());
-            preparedStatement.setString(2, candidate.getDescription());
-            preparedStatement.setBytes(3, candidate.getPhoto());
+            setCandidateAttributes(candidate, preparedStatement);
             preparedStatement.execute();
             try (ResultSet id = preparedStatement.getGeneratedKeys()) {
                 if (id.next()) {
@@ -100,6 +101,15 @@ public class CandidateDbStore {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void setCandidateAttributes(Candidate candidate, PreparedStatement preparedStatement)
+            throws SQLException {
+        preparedStatement.setString(1, candidate.getName());
+        preparedStatement.setString(2, candidate.getDescription());
+        if (candidate.getPhoto() != null) {
+            preparedStatement.setBytes(3, candidate.getPhoto());
         }
     }
 }

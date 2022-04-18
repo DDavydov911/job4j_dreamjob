@@ -47,6 +47,8 @@
                             <input type="text" class="form-control" name="name" th:field="*{name}">
                         </label>
                         <br>
+                        <img th:width="150" th:high="150" th:src="@{|/photoCandidate/${candidate.id}|}">
+                        <br>
                         <label>Фотография
                             <input type="file" class="form-control" name="file">
                         </label>
