@@ -2,12 +2,12 @@ package ru.job4j.dream.store;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.stereotype.Repository;
-import ru.job4j.dream.model.City;
 import ru.job4j.dream.model.Post;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +16,6 @@ public class PostDBStore {
 
     private final BasicDataSource pool;
 
-    private final Gson gson = new GsonBuilder().create();
-
     public PostDBStore(BasicDataSource pool) {
         this.pool = pool;
     }
@@ -25,11 +23,11 @@ public class PostDBStore {
     public List<Post> findAll() {
         List<Post> posts = new ArrayList<>();
         try (Connection cn = pool.getConnection();
-             PreparedStatement ps = cn.prepareStatement("SELECT * FROM post")
+             PreparedStatement ps = cn.prepareStatement("SELECT * FROM post order by id")
         ) {
             try (ResultSet it = ps.executeQuery()) {
                 while (it.next()) {
-                    posts.add(new Post(it.getInt("id"), it.getString("name")));
+                    posts.add(createPostFromResultSet(it));
                 }
             }
         } catch (Exception e) {
@@ -42,16 +40,12 @@ public class PostDBStore {
     public Post add(Post post) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
-                     "INSERT INTO post(name, description, created, visible, city) "
-                             + "VALUES (?, ?, ?, ?, ?)",
+                     "INSERT INTO post(name, description, visible, created) "
+                             + "VALUES (?, ?, ?, ?)",
                      PreparedStatement.RETURN_GENERATED_KEYS)
         ) {
             setValuesFromPreparedStatement(post, ps);
-//            ps.setString(1, post.getName());
-//            ps.setString(2, post.getDescription());
-//            ps.setTimestamp(3, Timestamp.valueOf(post.getCreated()));
-//            ps.setBoolean(4, post.getVisible());
-//            ps.setObject(5, gson.toJson(post.getCity()));
+            ps.setTimestamp(4, Timestamp.valueOf(post.getCreated()));
             ps.execute();
             try (ResultSet id = ps.getGeneratedKeys()) {
                 if (id.next()) {
@@ -67,16 +61,16 @@ public class PostDBStore {
     public void update(Post post) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
-                     "UPDATE post SET name = ?, description = ?, created = ?, visible = ?,"
-                             + " city = ? WHERE id = ?")
+                     "UPDATE post SET name = ?, description = ?, visible = ?"
+                             + " WHERE id = ?")
         ) {
             setValuesFromPreparedStatement(post, ps);
-//            ps.setString(1, String.valueOf(post.getName()));
-            ps.setInt(6, post.getId());
+            ps.setInt(4, post.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
 
     }
 
@@ -103,10 +97,11 @@ public class PostDBStore {
                   resultSet.getInt("id"),
                   resultSet.getString("name")
             );
-            post.setDescription(resultSet.getString("description"));
-            post.setCreated(resultSet.getTimestamp("created").toLocalDateTime());
+            String str1 = resultSet.getString("description");
+            post.setDescription(str1 != null ? str1 : "описание отсутствует");
             post.setVisible(resultSet.getBoolean("visible"));
-            post.setCity(gson.fromJson(String.valueOf(resultSet.getObject("city")), City.class));
+            Timestamp time = resultSet.getTimestamp("created");
+            post.setCreated(time != null ? time.toLocalDateTime() : LocalDateTime.now());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -116,9 +111,6 @@ public class PostDBStore {
     private void setValuesFromPreparedStatement(Post post, PreparedStatement ps) throws SQLException {
         ps.setString(1, post.getName());
         ps.setString(2, post.getDescription());
-        ps.setTimestamp(3, Timestamp.valueOf(post.getCreated()));
-        ps.setBoolean(4, post.getVisible());
-        ps.setObject(5, gson.toJson(post.getCity()));
+        ps.setBoolean(3, post.getVisible());
     }
-
 }
