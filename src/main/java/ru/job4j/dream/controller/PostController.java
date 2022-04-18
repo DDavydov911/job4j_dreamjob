@@ -35,22 +35,8 @@ public class PostController {
             user.setName("Гость");
         }
         model.addAttribute("user", user);
-
         model.addAttribute("posts", postService.findAll());
         return "posts";
-    }
-
-    @GetMapping("/addPost")
-    public String addPost(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            user = new User();
-            user.setName("Гость");
-        }
-        model.addAttribute("user", user);
-
-        model.addAttribute("post", new Post(0, "Заполните поле"));
-        return "addPost";
     }
 
     @GetMapping("/formAddPost")
@@ -61,7 +47,6 @@ public class PostController {
             user.setName("Гость");
         }
         model.addAttribute("user", user);
-
         model.addAttribute("cities", cityService.getAllCities());
         return "addPost";
     }
@@ -89,4 +74,19 @@ public class PostController {
         postService.create(post);
         return "redirect:/posts";
     }
+
+    /*
+    @GetMapping("/addPost")
+    public String addPost(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            user = new User();
+            user.setName("Гость");
+        }
+        model.addAttribute("user", user);
+
+        model.addAttribute("post", new Post(0, "Заполните поле"));
+        return "addPost";
+    }
+ */
 }
