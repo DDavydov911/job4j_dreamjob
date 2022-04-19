@@ -70,15 +70,12 @@ public class CandidateDbStore {
     }
 
     public void update(Candidate candidate) {
-        boolean hasPhoto = candidate.getPhoto() != null;
-        String st1 = "UPDATE candidates SET name = ?, description = ?, photo = ? WHERE id = ?";
-        String st2 = "UPDATE candidates SET name = ?, description = ? WHERE id = ?";
         try (Connection connection = pool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     hasPhoto ? st1 : st2
+                     "UPDATE candidates SET name = ?, description = ?, photo = ? WHERE id = ?"
              )) {
             setCandidateAttributes(candidate, preparedStatement);
-            preparedStatement.setInt(hasPhoto ? 4 : 3, candidate.getId());
+            preparedStatement.setInt(4, candidate.getId());
             int res = preparedStatement.executeUpdate();
             System.out.println(res);
         } catch (SQLException e) {
@@ -89,16 +86,30 @@ public class CandidateDbStore {
     public void create(Candidate candidate) {
         try (Connection connection = pool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     "INSERT INTO candidates(name, description, photo) VALUES (?, ?, ?)",
+                     "INSERT INTO candidates(name, description, photo, created) VALUES (?, ?, ?, ?)",
                      PreparedStatement.RETURN_GENERATED_KEYS
              )) {
             setCandidateAttributes(candidate, preparedStatement);
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(candidate.getCreated()));
             preparedStatement.execute();
             try (ResultSet id = preparedStatement.getGeneratedKeys()) {
                 if (id.next()) {
                     candidate.setId(id.getInt(1));
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deletePhotoById(int id) {
+        try (Connection connection = pool.getConnection();
+        PreparedStatement ps = connection.prepareStatement(
+                "UPDATE candidates SET photo = ? WHERE id = ?"
+        )) {
+            ps.setBytes(1, new byte[]{});
+            ps.setInt(2, id);
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

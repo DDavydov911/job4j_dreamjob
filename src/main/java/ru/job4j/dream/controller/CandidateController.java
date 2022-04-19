@@ -67,11 +67,18 @@ public class CandidateController {
         return "updateCandidate";
     }
 
+    @PostMapping("/deletePhoto")
+    public String deletePhoto(@RequestParam("id") int id) {
+        candidateService.deletePhotoById(id);
+        return "redirect:/formUpdateCandidate/" + id;
+    }
 
     @PostMapping("/updateCandidate")
     public String updateCandidate(@ModelAttribute Candidate candidate,
                                   @RequestParam("file") MultipartFile file) throws IOException {
-        candidate.setPhoto(file.getBytes());
+        if (file != null) {
+            candidate.setPhoto(file.getBytes());
+        }
         candidateService.update(candidate);
         return "redirect:/candidates";
     }

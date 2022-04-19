@@ -40,4 +40,8 @@ public class CandidateService {
     public Candidate getById(Integer candidateId) {
         return candidateDbStore.findById(candidateId);
     }
+
+    public void deletePhotoById(int id) {
+        candidateDbStore.deletePhotoById(id);
+    }
 }
