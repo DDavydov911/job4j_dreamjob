@@ -4,5 +4,5 @@ CREATE TABLE post (
    description TEXT,
    created TIMESTAMP,
    visible BOOLEAN,
-   city json
+   city integer
 );

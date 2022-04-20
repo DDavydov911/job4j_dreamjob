@@ -15,12 +15,21 @@ public class PostService {
 
     private final PostDBStore store;
 
-    public PostService(PostDBStore store) {
+    private final CityService cityService;
+
+    public PostService(PostDBStore store, CityService cityService) {
         this.store = store;
+        this.cityService = cityService;
     }
 
     public List<Post> findAll() {
-        return new ArrayList<>(store.findAll());
+        List<Post> list = new ArrayList<>(store.findAll());
+        list.forEach(
+                post -> post.setCity(
+                        cityService.findById(post.getCity().getId())
+                )
+        );
+        return list;
     }
 
     public void add(Post post) {
@@ -39,7 +48,9 @@ public class PostService {
     */
 
     public Post findById(int id) {
-        return store.findById(id);
+        Post post = store.findById(id);
+        post.setCity(cityService.findById(post.getCity().getId()));
+        return post;
     }
 
     public void create(Post post) {

@@ -2,6 +2,7 @@ package ru.job4j.dream.store;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.stereotype.Repository;
+import ru.job4j.dream.model.City;
 import ru.job4j.dream.model.Post;
 
 import com.google.gson.Gson;
@@ -40,12 +41,13 @@ public class PostDBStore {
     public Post add(Post post) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps = cn.prepareStatement(
-                     "INSERT INTO post(name, description, visible, created) "
-                             + "VALUES (?, ?, ?, ?)",
+                     "INSERT INTO post(name, description, visible, created, city_id) "
+                             + "VALUES (?, ?, ?, ?, ?)",
                      PreparedStatement.RETURN_GENERATED_KEYS)
         ) {
             setValuesFromPreparedStatement(post, ps);
             ps.setTimestamp(4, Timestamp.valueOf(post.getCreated()));
+            ps.setInt(5, post.getCity().getId());
             ps.execute();
             try (ResultSet id = ps.getGeneratedKeys()) {
                 if (id.next()) {
@@ -102,6 +104,7 @@ public class PostDBStore {
             post.setVisible(resultSet.getBoolean("visible"));
             Timestamp time = resultSet.getTimestamp("created");
             post.setCreated(time != null ? time.toLocalDateTime() : LocalDateTime.now());
+            post.setCity(new City(resultSet.getInt("city_id"), null));
         } catch (SQLException e) {
             e.printStackTrace();
         }
